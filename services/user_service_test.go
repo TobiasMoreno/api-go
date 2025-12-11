@@ -213,4 +213,3 @@ func TestUserService_GetAllUsers(t *testing.T) {
 		t.Errorf("GetAllUsers() retornó %d usuarios, esperaba %d", len(allUsers), len(users))
 	}
 }
-

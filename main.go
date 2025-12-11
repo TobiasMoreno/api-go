@@ -56,11 +56,6 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	log.Printf("Servidor iniciado en http://localhost%s", addr)
-	log.Printf("Health check: http://localhost%s/health", addr)
-	log.Printf("API endpoints: http://localhost%s/api/v1/users", addr)
-	log.Printf("Swagger UI: http://localhost%s/swagger/index.html", addr)
-
 	// Cerrar conexión MySQL al finalizar
 	defer func() {
 		if err := userRepo.Close(); err != nil {
@@ -68,8 +63,14 @@ func main() {
 		}
 	}()
 
+	log.Printf("Servidor iniciado en http://localhost%s", addr)
+	log.Printf("Health check: http://localhost%s/health", addr)
+	log.Printf("API endpoints: http://localhost%s/api/v1/users", addr)
+	log.Printf("Swagger UI: http://localhost%s/swagger/index.html", addr)
+
 	// Iniciar servidor
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("Error al iniciar el servidor: %v", err)
+		log.Printf("Error al iniciar el servidor: %v", err)
+		return
 	}
 }

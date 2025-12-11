@@ -18,4 +18,3 @@ type UserRepository interface {
 	Update(id string, user *models.User) error
 	Delete(id string) error
 }
-

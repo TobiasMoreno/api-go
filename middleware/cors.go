@@ -25,4 +25,3 @@ func (m *CORSMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	m.handler.ServeHTTP(w, r)
 }
-

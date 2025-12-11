@@ -172,6 +172,7 @@ func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{})
 	w.WriteHeader(statusCode)
 	if err := json.NewEncoder(w).Encode(payload); err != nil {
 		// Si falla la codificación JSON, ya escribimos el header, no podemos hacer mucho más
+		// nolint:errcheck // Error de escritura en respuesta HTTP, no hay recuperación posible
 		_, _ = w.Write([]byte(`{"error":"error al codificar respuesta"}`))
 	}
 }

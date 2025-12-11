@@ -150,4 +150,3 @@ func (r *MySQLUserRepository) Delete(id string) error {
 
 	return nil
 }
-

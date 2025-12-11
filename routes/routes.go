@@ -29,7 +29,8 @@ func SetupRoutes(userService services.UserService) http.Handler {
 	// Ruta de health check
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		// nolint:errcheck // Error de escritura en respuesta HTTP, no hay recuperación posible
+		_, _ = w.Write([]byte("OK"))
 	}).Methods("GET")
 
 	// Ruta de Swagger UI
@@ -46,4 +47,3 @@ func SetupRoutes(userService services.UserService) http.Handler {
 
 	return handler
 }
-
