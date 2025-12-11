@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"helloworld/config"
 	"helloworld/repositories"
@@ -40,27 +41,35 @@ func main() {
 	}
 	log.Println("Conectado a MySQL exitosamente")
 
-	// Cerrar conexión al finalizar
+	userService := services.NewUserService(userRepo)
+
+	// Configurar rutas
+	handler := routes.SetupRoutes(userService)
+
+	// Configurar servidor HTTP con timeouts
+	addr := fmt.Sprintf(":%s", cfg.Port)
+	srv := &http.Server{
+		Addr:         addr,
+		Handler:      handler,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	log.Printf("Servidor iniciado en http://localhost%s", addr)
+	log.Printf("Health check: http://localhost%s/health", addr)
+	log.Printf("API endpoints: http://localhost%s/api/v1/users", addr)
+	log.Printf("Swagger UI: http://localhost%s/swagger/index.html", addr)
+
+	// Cerrar conexión MySQL al finalizar
 	defer func() {
 		if err := userRepo.Close(); err != nil {
 			log.Printf("Error al cerrar conexión MySQL: %v", err)
 		}
 	}()
 
-	userService := services.NewUserService(userRepo)
-
-	// Configurar rutas
-	handler := routes.SetupRoutes(userService)
-
 	// Iniciar servidor
-	addr := fmt.Sprintf(":%s", cfg.Port)
-	log.Printf("Servidor iniciado en http://localhost%s", addr)
-	log.Printf("Health check: http://localhost%s/health", addr)
-	log.Printf("API endpoints: http://localhost%s/api/v1/users", addr)
-	log.Printf("Swagger UI: http://localhost%s/swagger/index.html", addr)
-
-	if err := http.ListenAndServe(addr, handler); err != nil {
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Error al iniciar el servidor: %v", err)
 	}
 }
-

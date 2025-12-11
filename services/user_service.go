@@ -124,7 +124,7 @@ func (s *userService) validateCreateRequest(req models.CreateUserRequest) error 
 
 // isValidEmail realiza una validación básica de email
 func (s *userService) isValidEmail(email string) bool {
-	return len(email) > 0 && contains(email, "@")
+	return email != "" && contains(email, "@")
 }
 
 // contains verifica si un string contiene un substring
@@ -136,4 +136,3 @@ func contains(s, substr string) bool {
 	}
 	return false
 }
-

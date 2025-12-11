@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"helloworld/models"
+	"helloworld/repositories"
 	"helloworld/services"
 
 	"github.com/gorilla/mux"
@@ -71,7 +72,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.service.GetUserByID(id)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if err.Error() == "error al obtener usuario: usuario no encontrado" {
+		if err == repositories.ErrUserNotFound || err.Error() == repositories.ErrUserNotFound.Error() {
 			statusCode = http.StatusNotFound
 		}
 		respondWithError(w, statusCode, err.Error())
@@ -126,7 +127,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.service.UpdateUser(id, req)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
-		if err.Error() == "error al obtener usuario: usuario no encontrado" {
+		if err == repositories.ErrUserNotFound || err.Error() == repositories.ErrUserNotFound.Error() {
 			statusCode = http.StatusNotFound
 		} else if err == services.ErrInvalidEmail || err == services.ErrInvalidAge || err == services.ErrInvalidName {
 			statusCode = http.StatusBadRequest
@@ -155,7 +156,7 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.service.DeleteUser(id); err != nil {
 		statusCode := http.StatusInternalServerError
-		if err.Error() == "error al eliminar usuario: usuario no encontrado" {
+		if err == repositories.ErrUserNotFound || err.Error() == repositories.ErrUserNotFound.Error() {
 			statusCode = http.StatusNotFound
 		}
 		respondWithError(w, statusCode, err.Error())
@@ -169,7 +170,10 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(payload)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		// Si falla la codificación JSON, ya escribimos el header, no podemos hacer mucho más
+		_, _ = w.Write([]byte(`{"error":"error al codificar respuesta"}`))
+	}
 }
 
 // respondWithError envía una respuesta de error JSON
