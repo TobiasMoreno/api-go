@@ -1,0 +1,352 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API REST para gestión de usuarios siguiendo principios SOLID",
+        "title": "API de Usuarios",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Soporte API",
+            "email": "soporte@ejemplo.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/users": {
+            "get": {
+                "description": "Obtiene una lista de todos los usuarios registrados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "usuarios"
+                ],
+                "summary": "Obtener todos los usuarios",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.User"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Crea un nuevo usuario en el sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "usuarios"
+                ],
+                "summary": "Crear un nuevo usuario",
+                "parameters": [
+                    {
+                        "description": "Datos del usuario",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Obtiene la información de un usuario específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "usuarios"
+                ],
+                "summary": "Obtener un usuario por ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Actualiza la información de un usuario existente (actualización parcial)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "usuarios"
+                ],
+                "summary": "Actualizar un usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos a actualizar",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Elimina un usuario del sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "usuarios"
+                ],
+                "summary": "Eliminar un usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.CreateUserRequest": {
+            "description": "Datos requeridos para crear un nuevo usuario",
+            "type": "object",
+            "required": [
+                "age",
+                "email",
+                "name"
+            ],
+            "properties": {
+                "age": {
+                    "description": "Edad del usuario",
+                    "type": "integer",
+                    "example": 30
+                },
+                "email": {
+                    "description": "Email del usuario",
+                    "type": "string",
+                    "example": "juan@example.com"
+                },
+                "name": {
+                    "description": "Nombre del usuario",
+                    "type": "string",
+                    "example": "Juan Pérez"
+                }
+            }
+        },
+        "models.UpdateUserRequest": {
+            "description": "Datos opcionales para actualizar un usuario (actualización parcial)",
+            "type": "object",
+            "properties": {
+                "age": {
+                    "description": "Nueva edad (opcional)",
+                    "type": "integer",
+                    "example": 31
+                },
+                "email": {
+                    "description": "Nuevo email (opcional)",
+                    "type": "string",
+                    "example": "juan@example.com"
+                },
+                "name": {
+                    "description": "Nuevo nombre (opcional)",
+                    "type": "string",
+                    "example": "Juan Pérez"
+                }
+            }
+        },
+        "models.User": {
+            "description": "Usuario del sistema",
+            "type": "object",
+            "properties": {
+                "age": {
+                    "description": "Edad del usuario",
+                    "type": "integer",
+                    "example": 30
+                },
+                "email": {
+                    "description": "Email del usuario",
+                    "type": "string",
+                    "example": "juan@example.com"
+                },
+                "id": {
+                    "description": "ID único del usuario",
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "name": {
+                    "description": "Nombre del usuario",
+                    "type": "string",
+                    "example": "Juan Pérez"
+                }
+            }
+        }
+    }
+}

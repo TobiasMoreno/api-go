@@ -1,0 +1,243 @@
+basePath: /api/v1
+definitions:
+  models.CreateUserRequest:
+    description: Datos requeridos para crear un nuevo usuario
+    properties:
+      age:
+        description: Edad del usuario
+        example: 30
+        type: integer
+      email:
+        description: Email del usuario
+        example: juan@example.com
+        type: string
+      name:
+        description: Nombre del usuario
+        example: Juan Pérez
+        type: string
+    required:
+    - age
+    - email
+    - name
+    type: object
+  models.UpdateUserRequest:
+    description: Datos opcionales para actualizar un usuario (actualización parcial)
+    properties:
+      age:
+        description: Nueva edad (opcional)
+        example: 31
+        type: integer
+      email:
+        description: Nuevo email (opcional)
+        example: juan@example.com
+        type: string
+      name:
+        description: Nuevo nombre (opcional)
+        example: Juan Pérez
+        type: string
+    type: object
+  models.User:
+    description: Usuario del sistema
+    properties:
+      age:
+        description: Edad del usuario
+        example: 30
+        type: integer
+      email:
+        description: Email del usuario
+        example: juan@example.com
+        type: string
+      id:
+        description: ID único del usuario
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      name:
+        description: Nombre del usuario
+        example: Juan Pérez
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: soporte@ejemplo.com
+    name: Soporte API
+  description: API REST para gestión de usuarios siguiendo principios SOLID
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API de Usuarios
+  version: "1.0"
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene una lista de todos los usuarios registrados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Obtener todos los usuarios
+      tags:
+      - usuarios
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo usuario en el sistema
+      parameters:
+      - description: Datos del usuario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Crear un nuevo usuario
+      tags:
+      - usuarios
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina un usuario del sistema
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Eliminar un usuario
+      tags:
+      - usuarios
+    get:
+      consumes:
+      - application/json
+      description: Obtiene la información de un usuario específico
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Obtener un usuario por ID
+      tags:
+      - usuarios
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un usuario existente (actualización
+        parcial)
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Datos a actualizar
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Actualizar un usuario
+      tags:
+      - usuarios
+schemes:
+- http
+- https
+swagger: "2.0"

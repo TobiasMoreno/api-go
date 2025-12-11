@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: go-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=usersdb
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-api
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=appuser
+      - DB_PASSWORD=apppassword
+      - DB_NAME=usersdb
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
