@@ -9,12 +9,12 @@ import (
 
 // Config contiene la configuración de la aplicación
 type Config struct {
-	Port     string
-	DBHost   string
-	DBPort   string
-	DBUser   string
+	Port       string
+	DBHost     string
+	DBPort     string
+	DBUser     string
 	DBPassword string
-	DBName   string
+	DBName     string
 }
 
 // LoadConfig carga la configuración desde variables de entorno o valores por defecto
@@ -55,12 +55,12 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		Port:      port,
-		DBHost:    dbHost,
-		DBPort:    dbPort,
-		DBUser:    dbUser,
+		Port:       port,
+		DBHost:     dbHost,
+		DBPort:     dbPort,
+		DBUser:     dbUser,
 		DBPassword: dbPassword,
-		DBName:    dbName,
+		DBName:     dbName,
 	}
 }
 
@@ -68,4 +68,3 @@ func LoadConfig() *Config {
 func (c *Config) GetDSN() string {
 	return c.DBUser + ":" + c.DBPassword + "@tcp(" + c.DBHost + ":" + c.DBPort + ")/" + c.DBName + "?charset=utf8mb4&parseTime=True&loc=Local"
 }
-

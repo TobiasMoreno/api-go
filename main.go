@@ -32,32 +32,20 @@ func main() {
 	// Cargar configuración
 	cfg := config.LoadConfig()
 
-	// Inicializar repositorio (MySQL si está configurado, sino memoria)
-	var userRepo repositories.UserRepository
-	var err error
-
-	// Intentar usar MySQL si está configurado
-	if cfg.DBHost != "" && cfg.DBHost != "localhost" || cfg.DBPassword != "" {
-		log.Println("Conectando a MySQL...")
-		userRepo, err = repositories.NewMySQLUserRepository(cfg.GetDSN())
-		if err != nil {
-			log.Printf("Error al conectar con MySQL: %v. Usando repositorio en memoria.", err)
-			userRepo = repositories.NewInMemoryUserRepository()
-		} else {
-			log.Println("Conectado a MySQL exitosamente")
-			// Cerrar conexión al finalizar
-			defer func() {
-				if mysqlRepo, ok := userRepo.(*repositories.MySQLUserRepository); ok {
-					if err := mysqlRepo.Close(); err != nil {
-						log.Printf("Error al cerrar conexión MySQL: %v", err)
-					}
-				}
-			}()
-		}
-	} else {
-		log.Println("Usando repositorio en memoria")
-		userRepo = repositories.NewInMemoryUserRepository()
+	// Inicializar repositorio MySQL (requerido)
+	log.Println("Conectando a MySQL...")
+	userRepo, err := repositories.NewMySQLUserRepository(cfg.GetDSN())
+	if err != nil {
+		log.Fatalf("Error al conectar con MySQL: %v. La aplicación requiere MySQL para funcionar.", err)
 	}
+	log.Println("Conectado a MySQL exitosamente")
+
+	// Cerrar conexión al finalizar
+	defer func() {
+		if err := userRepo.Close(); err != nil {
+			log.Printf("Error al cerrar conexión MySQL: %v", err)
+		}
+	}()
 
 	userService := services.NewUserService(userRepo)
 
