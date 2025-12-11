@@ -36,14 +36,14 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: usersdb
           MYSQL_USER: appuser
           MYSQL_PASSWORD: apppassword
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD}"
+          --health-cmd="mysqladmin ping -h localhost -u root -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -70,11 +70,13 @@ jobs:
 
       - name: Run tests
         env:
+          PORT: 8080
           DB_HOST: localhost
           DB_PORT: 3306
           DB_USER: appuser
           DB_PASSWORD: apppassword
           DB_NAME: usersdb
+          MYSQL_ROOT_PASSWORD: root
         run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Upload coverage to Codecov
